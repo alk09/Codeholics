@@ -1,0 +1,6 @@
+﻿  main.cpp
+C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\Codeholics\main.cpp(160,34): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\Codeholics\main.cpp(316,57): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Codeholics.vcxproj -> C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\x64\Debug\Codeholics.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
