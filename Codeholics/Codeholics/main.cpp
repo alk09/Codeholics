@@ -1,406 +1,248 @@
-#include "raylib.h" // Raylib library for graphics and input handling
-#include <iostream> // For standard I/O operations
-#include <vector>   // For using vectors (dynamic arrays)
-#include <string>   // For handling strings
-#include <ctime>    // For random seed generation
-#include <algorithm> // For std::transform (case conversion)
+/*******************************************************************
+* Wordle-Like Game Using Raylib
+* A graphical version of the popular word guessing game "Wordle."
+* Enhanced with a main menu, dynamic word selection, scoring, and more.
+* Written in C++
+********************************************************************/
 
-// Constants for screen size
-const int screenWidth = 800; // Width of the window
-const int screenHeight = 600; // Height of the window
+#include "raylib.h" // Includes the raylib library for graphics and input handling
+#include <string>   // Provides the std::string class for text manipulation
+#include <vector>   // Provides the std::vector container for dynamic arrays
+#include <ctime>    // Enables time-based functions, used for randomization
+#include <cstdlib>  // Includes the rand() and srand() functions for random number generation
 
-// Colors for UI
-Color LightGray = { 200, 200, 200, 255 }; // Light gray for background
-Color DarkGray = { 50, 50, 50, 255 }; // Dark gray for main background
-Color Highlight = { 0, 150, 200, 255 }; // Blue highlight for selected options
-Color TextColor = WHITE; // Default text color
+// Game Constants
+const int screenWidth = 800;       // Width of the game window in pixels
+const int screenHeight = 600;      // Height of the game window in pixels
+const int maxGuesses = 6;          // Maximum number of guesses allowed
+const int wordLength = 5;          // Number of letters in the secret word
 
-// Game states for menu navigation
-enum GameState { MENU, PLAY, OPTIONS, INSTRUCTIONS, CREDITS, EXIT };
-GameState currentState = MENU; // Starting state is the main menu
+// Colors
+Color correctColor = GREEN;        // Highlight color for correct letters in correct positions
+Color presentColor = YELLOW;       // Highlight color for correct letters in wrong positions
+Color absentColor = GRAY;          // Highlight color for absent letters
 
-// Difficulty levels
-enum Difficulty { EASY, MEDIUM, HARD };
-Difficulty currentDifficulty = EASY; // Default difficulty is easy
+// List of possible words (dynamic word selection)
+std::vector<std::string> wordList = { "CRANE", "PLANE", "BRAVE", "GRAPE", "SHINE", "BLEND", "DRIVE", "CHIME" };
 
-// Word lists for each difficulty level
-std::vector<std::string> easyWords = { "apple", "book", "cat", "dog", "fish" }; // Easy word list
-std::vector<std::string> mediumWords = { "planet", "window", "guitar", "rocket" }; // Medium word list
-std::vector<std::string> hardWords = { "algorithm", "philosophy", "encyclopedia" }; // Hard word list
+// Function to choose a random word from the list
+std::string GetRandomWord() {
+    srand(time(0)); // Seeds the random number generator with the current time
+    return wordList[rand() % wordList.size()]; // Selects a random word from wordList
+}
 
-// Gameplay variables
-std::string secretWord; // The word to be guessed
-std::string guessedWord; // The current state of the guessed word (e.g., "a__le")
-std::vector<char> wrongGuesses; // Stores incorrect guesses
-int maxAttempts; // Max number of allowed wrong guesses
-bool gameWon = false; // Tracks if the player has won
-bool gameLost = false; // Tracks if the player has lost
+// Helper Function: Convert a character to uppercase
+char ToUpper(char c) {
+    if (c >= 'a' && c <= 'z') return c - 32; // Converts lowercase letters ('a'-'z') to uppercase
+    return c; // Returns the character as-is if it's not lowercase
+}
 
-// Function prototypes
-void DrawMenu(); // Function to render the main menu
-void DrawGameplay(); // Function to render the gameplay screen
-void DrawOptions(); // Function to render the options menu
-void DrawInstructions(); // Function to render instructions screen
-void DrawCredits(); // Function to render credits screen
-void UpdateGameplay(); // Function to update gameplay logic
-void InitializeGame(); // Function to initialize game variables
-void ResetGame(Difficulty difficulty); // Resets the game state based on difficulty
-void DrawHangman(int attemptsLeft); // Draws the hangman based on remaining attempts
-void HandleWinCondition(); // Handles what happens when the player wins
-void HandleLossCondition(); // Handles what happens when the player loses
+// Helper Function: Compare two strings character by character
+std::vector<int> CheckGuess(const std::string& guess, const std::string& word) {
+    std::vector<int> result(wordLength, 0); // Initialize feedback array (0 = absent, 1 = present, 2 = correct)
+    std::string tempWord = word;            // Copy of the secret word for tracking matched letters
 
-// Function to reset the game for a new round
-void ResetGame(Difficulty difficulty) {
-    wrongGuesses.clear(); // Clear previous wrong guesses
-    gameWon = false; // Reset win condition
-    gameLost = false; // Reset loss condition
-
-    // Set the max attempts based on difficulty
-    switch (difficulty) {
-    case EASY:
-        maxAttempts = 8; // Easier games allow more attempts
-        secretWord = easyWords[rand() % easyWords.size()]; // Random word from the easy list
-        break;
-    case MEDIUM:
-        maxAttempts = 6; // Medium games have fewer attempts
-        secretWord = mediumWords[rand() % mediumWords.size()]; // Random word from the medium list
-        break;
-    case HARD:
-        maxAttempts = 4; // Hard games have the least attempts
-        secretWord = hardWords[rand() % hardWords.size()]; // Random word from the hard list
-        break;
+    // First pass: Check for exact matches (correct letters in correct positions)
+    for (int i = 0; i < wordLength; i++) {
+        if (guess[i] == tempWord[i]) {
+            result[i] = 2;     // Mark the position as correct
+            tempWord[i] = '*'; // Mark the letter as used
+        }
     }
 
-    guessedWord = std::string(secretWord.size(), '_'); // Initialize guessedWord with underscores
-}
-
-// Function to initialize the game (called once when starting gameplay)
-void InitializeGame() {
-    ResetGame(currentDifficulty); // Reset the game with the selected difficulty
-}
-
-// Function to draw the main menu
-void DrawMenu() {
-    // Center the text on the screen
-    const char* title = "HANGMAN GAME";
-    DrawText(title, screenWidth / 2 - MeasureText(title, 40) / 2, 100, 40, TextColor); // Title
-
-    const char* play = "1. Play";
-    const char* options = "2. Options";
-    const char* instructions = "3. Instructions";
-    const char* credits = "4. Credits";
-    const char* exit = "5. Exit";
-
-    // Render menu options
-    DrawText(play, screenWidth / 2 - MeasureText(play, 20) / 2, 200, 20, Highlight);
-    DrawText(options, screenWidth / 2 - MeasureText(options, 20) / 2, 250, 20, TextColor);
-    DrawText(instructions, screenWidth / 2 - MeasureText(instructions, 20) / 2, 300, 20, TextColor);
-    DrawText(credits, screenWidth / 2 - MeasureText(credits, 20) / 2, 350, 20, TextColor);
-    DrawText(exit, screenWidth / 2 - MeasureText(exit, 20) / 2, 400, 20, TextColor);
-
-    // Handle input for menu navigation
-    if (IsKeyPressed(KEY_ONE)) currentState = PLAY; // Start gameplay
-    if (IsKeyPressed(KEY_TWO)) currentState = OPTIONS; // Go to options
-    if (IsKeyPressed(KEY_THREE)) currentState = INSTRUCTIONS; // Show instructions
-    if (IsKeyPressed(KEY_FOUR)) currentState = CREDITS; // Show credits
-    if (IsKeyPressed(KEY_FIVE)) currentState = EXIT; // Exit game
-}
-
-// Function to update the gameplay (called every frame during gameplay)
-void UpdateGameplay() {
-    if (gameWon || gameLost) return; // If the game is already won or lost, no need to update.
-
-    // Check for key press input (for guessing letters)
-    for (char letter = 'A'; letter <= 'Z'; ++letter) {
-        if (IsKeyPressed(letter)) {
-            char guessedLetter = tolower(letter); // Convert to lowercase for consistency
-
-            // Check if the letter is already guessed
-            if (std::find(wrongGuesses.begin(), wrongGuesses.end(), guessedLetter) != wrongGuesses.end() ||
-                guessedWord.find(guessedLetter) != std::string::npos) {
-                continue; // Skip if the letter is already guessed
-            }
-
-            // Check if the guessed letter is in the secret word
-            bool correctGuess = false;
-            for (size_t i = 0; i < secretWord.size(); ++i) {
-                if (secretWord[i] == guessedLetter) {
-                    guessedWord[i] = guessedLetter; // Reveal the letter in the guessedWord
-                    correctGuess = true;
+    // Second pass: Check for correct letters in wrong positions
+    for (int i = 0; i < wordLength; i++) {
+        if (result[i] != 2) { // Skip already matched letters
+            for (int j = 0; j < wordLength; j++) {
+                if (guess[i] == tempWord[j]) {
+                    result[i] = 1;     // Mark as present but misplaced
+                    tempWord[j] = '*'; // Mark the letter as used
+                    break;
                 }
             }
-
-            if (!correctGuess) {
-                wrongGuesses.push_back(guessedLetter); // Add to wrong guesses if incorrect
-            }
-
-            // Check for win condition
-            if (guessedWord == secretWord) {
-                gameWon = true; // Player won
-            }
-
-            // Check for loss condition (if the max attempts are exceeded)
-            if (wrongGuesses.size() >= maxAttempts) {
-                gameLost = true; // Player lost
-            }
         }
     }
+    return result; // Return feedback array
 }
 
-// Function to render the gameplay screen (draws the game state)
-void DrawGameplay() {
-    // Draw the guessed word (with underscores for unguessed letters)
-    DrawText(("Word: " + guessedWord).c_str(), screenWidth / 2 - MeasureText(guessedWord.c_str(), 30) / 2, 150, 30, TextColor);
+// Function to display the main menu
+void DisplayMainMenu(int selectedOption) {
+    const char* menuOptions[] = { "PLAY", "HOW TO PLAY", "ABOUT US", "EXIT" }; // Menu options
+    int totalOptions = 4; // Total number of menu items
 
-    // Draw the wrong guesses
-    DrawText(("Wrong guesses: " + std::string(wrongGuesses.begin(), wrongGuesses.end())).c_str(),
-        screenWidth / 2 - MeasureText("Wrong guesses: ", 20) / 2, 250, 20, TextColor);
+    ClearBackground(RAYWHITE); // Set the background color to white
+    DrawText("WORDLE GAME MENU", screenWidth / 2 - MeasureText("WORDLE GAME MENU", 30) / 2, 50, 30, BLACK); // Title
 
-    // Draw the hangman (based on the number of wrong attempts)
-    DrawHangman(wrongGuesses.size());
-
-    // Check if the player has won or lost and display the appropriate message
-    if (gameWon) {
-        DrawText("You Win!", screenWidth / 2 - MeasureText("You Win!", 40) / 2, 350, 40, Highlight);
-    }
-    else if (gameLost) {
-        DrawText("You Lose!", screenWidth / 2 - MeasureText("You Lose!", 40) / 2, 350, 40, Highlight);
-        DrawText(("The word was: " + secretWord).c_str(), screenWidth / 2 - MeasureText("The word was: ", 20) / 2, 400, 20, TextColor);
+    // Loop to draw each menu option
+    for (int i = 0; i < totalOptions; i++) {
+        Color textColor = (i == selectedOption) ? GREEN : DARKGRAY; // Highlight the selected option
+        DrawText(menuOptions[i], screenWidth / 2 - MeasureText(menuOptions[i], 20) / 2, 150 + i * 50, 20, textColor); // Draw option
     }
 }
 
-// Function to draw the hangman based on the number of wrong attempts
-void DrawHangman(int attemptsLeft) {
-    // Draw hangman body parts depending on how many attempts left
-    switch (attemptsLeft) {
-    case 0: // No wrong attempts, no hangman drawn
-        break;
-    case 1: // Head
-        DrawCircle(screenWidth / 2, 100, 30, WHITE);
-        break;
-    case 2: // Body
-        DrawLine(screenWidth / 2, 130, screenWidth / 2, 200, WHITE);
-        break;
-    case 3: // Left arm
-        DrawLine(screenWidth / 2, 150, screenWidth / 2 - 50, 170, WHITE);
-        break;
-    case 4: // Right arm
-        DrawLine(screenWidth / 2, 150, screenWidth / 2 + 50, 170, WHITE);
-        break;
-    case 5: // Left leg
-        DrawLine(screenWidth / 2, 200, screenWidth / 2 - 50, 250, WHITE);
-        break;
-    case 6: // Right leg
-        DrawLine(screenWidth / 2, 200, screenWidth / 2 + 50, 250, WHITE);
-        break;
-    case 7: // Noose (full hangman)
-        DrawLine(screenWidth / 2, 100, screenWidth / 2, 50, WHITE); // The rope
-        break;
+// Function to display "How to Play"
+void DisplayHowToPlay() {
+    ClearBackground(RAYWHITE); // Set the background color to white
+    DrawText("HOW TO PLAY", screenWidth / 2 - MeasureText("HOW TO PLAY", 30) / 2, 50, 30, BLACK); // Title
+    // Instructions
+    DrawText("1. Guess the secret 5-letter word in 6 attempts.", 50, 150, 20, DARKGRAY);
+    DrawText("2. Each guess must be a valid word.", 50, 180, 20, DARKGRAY);
+    DrawText("3. Feedback will indicate correct, misplaced, or absent letters.", 50, 210, 20, DARKGRAY);
+    DrawText("Press ESC to return to the menu.", 50, 270, 20, DARKGRAY); // Back navigation hint
+}
+
+// Function to display "About Us"
+void DisplayAboutUs() {
+    ClearBackground(RAYWHITE); // Set the background color to white
+    DrawText("ABOUT US", screenWidth / 2 - MeasureText("ABOUT US", 30) / 2, 50, 30, BLACK); // Title
+    // Description
+    DrawText("This Wordle-like game was created using raylib.", 50, 150, 20, DARKGRAY);
+    DrawText("Author: Your Name", 50, 180, 20, DARKGRAY);
+    DrawText("Year: 2024", 50, 210, 20, DARKGRAY);
+    DrawText("Press ESC to return to the menu.", 50, 270, 20, DARKGRAY); // Back navigation hint
+}
+
+// Function to run the game loop
+void RunGame() {
+    std::string answer = GetRandomWord();         // Secret word chosen randomly
+    std::vector<std::string> guesses;           // List of guesses entered by the player
+    std::vector<std::vector<int>> feedbacks;    // Feedback for each guess
+    std::string currentGuess = "";              // Current guess being typed by the player
+    int score = 0;                              // Player's score
+    bool gameOver = false;                      // Flag indicating if the game is over
+    bool gameWon = false;                       // Flag indicating if the player has won
+
+    while (!WindowShouldClose()) { // Game loop runs until the window is closed
+        if (IsKeyPressed(KEY_ESCAPE)) break; // Exit the game to the menu if ESC is pressed
+
+        if (!gameOver) {
+            // Input handling
+            if (IsKeyPressed(KEY_BACKSPACE) && !currentGuess.empty()) {
+                currentGuess.pop_back(); // Remove the last character from the guess
+            }
+            else if (IsKeyPressed(KEY_ENTER) && currentGuess.length() == wordLength) {
+                // Submit the guess
+                std::vector<int> feedback = CheckGuess(currentGuess, answer); // Get feedback
+                feedbacks.push_back(feedback); // Store feedback
+                guesses.push_back(currentGuess); // Store the guess
+
+                if (currentGuess == answer) {
+                    gameOver = true; // Set game over flag
+                    gameWon = true; // Set game won flag
+                    score += 100;   // Add points for winning
+                }
+                else if (guesses.size() >= maxGuesses) {
+                    gameOver = true; // End game if maximum guesses are reached
+                }
+                currentGuess = ""; // Reset current guess
+            }
+            else {
+                // Add letters to the current guess
+                for (int key = KEY_A; key <= KEY_Z; key++) {
+                    if (IsKeyPressed(key) && currentGuess.length() < wordLength) {
+                        currentGuess += ToUpper((char)(key - KEY_A + 'A')); // Convert and add the letter
+                    }
+                }
+            }
+        }
+        else {
+            // Restart the game if game is over
+            if (IsKeyPressed(KEY_R)) {
+                answer = GetRandomWord(); // Select a new word
+                guesses.clear();          // Clear guesses
+                feedbacks.clear();        // Clear feedbacks
+                currentGuess = "";        // Reset current guess
+                gameOver = false;         // Reset game over flag
+                gameWon = false;          // Reset game won flag
+            }
+        }
+
+        // Drawing
+        BeginDrawing(); // Begin the rendering process
+        ClearBackground(RAYWHITE); // Set background color
+
+        // Title
+        DrawText("WORDLE", screenWidth / 2 - MeasureText("WORDLE", 40) / 2, 20, 40, BLACK);
+
+        // Instructions or game over message
+        if (!gameOver) {
+            DrawText("Type a 5-letter word and press ENTER to guess.", 20, 80, 20, DARKGRAY);
+        }
+        else {
+            DrawText(gameWon ? "YOU WIN! Press R to restart." : "GAME OVER! Press R to restart.", 20, 80, 20, gameWon ? GREEN : RED);
+            DrawText(TextFormat("The word was: %s", answer.c_str()), 20, 110, 20, DARKGRAY); // Display the correct word after the game ends
+            DrawText(TextFormat("Score: %d", score), screenWidth - MeasureText(TextFormat("Score: %d", score), 20) - 10, 10, 20, BLUE); //draw player's score
+        }
+
+        // Draw guesses and feedback
+        for (int i = 0; i < guesses.size(); i++) {
+            for (int j = 0; j < wordLength; j++) {
+                int feedback = feedbacks[i][j]; // Feedback for the current letter
+                Color cellColor = (feedback == 2) ? correctColor : (feedback == 1) ? presentColor : absentColor; // Determine color
+
+                // Draw a rectangle for each letter, colored based on feedback
+                DrawRectangle(50 + j * 60, 150 + i * 60, 50, 50, cellColor);
+                // Draw the letter inside the rectangle
+                DrawText(std::string(1, guesses[i][j]).c_str(), 65 + j * 60, 165 + i * 60, 20, WHITE);
+            }
+        }
+
+        // Draw the current guess being typed
+        for (int j = 0; j < currentGuess.size(); j++) {
+            DrawRectangle(50 + j * 60, 150 + guesses.size() * 60, 50, 50, LIGHTGRAY); // Draw light gray box
+            DrawText(std::string(1, currentGuess[j]).c_str(), 65 + j * 60, 165 + guesses.size() * 60, 20, BLACK); // Draw the letter
+        }
+
+        EndDrawing(); // End the rendering process
     }
 }
 
-// Function to draw the options menu (difficulty selection)
-void DrawOptions() {
-    const char* optionsTitle = "Options: Difficulty";
-    DrawText(optionsTitle, screenWidth / 2 - MeasureText(optionsTitle, 30) / 2, 100, 30, TextColor);
+// Entry Point: main function
+int main() {
+    // Initialize the Raylib window
+    InitWindow(screenWidth, screenHeight, "Wordle with Menu and Scoring");
+    SetTargetFPS(60); // Set the frame rate to 60 frames per second
 
-    // Render the difficulty options
-    DrawText("1. Easy", screenWidth / 2 - MeasureText("1. Easy", 20) / 2, 200, 20, currentDifficulty == EASY ? Highlight : TextColor);
-    DrawText("2. Medium", screenWidth / 2 - MeasureText("2. Medium", 20) / 2, 250, 20, currentDifficulty == MEDIUM ? Highlight : TextColor);
-    DrawText("3. Hard", screenWidth / 2 - MeasureText("3. Hard", 20) / 2, 300, 20, currentDifficulty == HARD ? Highlight : TextColor);
-    DrawText("4. Back", screenWidth / 2 - MeasureText("4. Back", 20) / 2, 350, 20, TextColor);
+    int menuOption = 0; // Tracks the currently selected menu option
 
-    // Handle key presses to change difficulty
-    if (IsKeyPressed(KEY_ONE)) {
-        currentDifficulty = EASY;
-        ResetGame(currentDifficulty); // Reset game with new difficulty
-    }
-    else if (IsKeyPressed(KEY_TWO)) {
-        currentDifficulty = MEDIUM;
-        ResetGame(currentDifficulty); // Reset game with new difficulty
-    }
-    else if (IsKeyPressed(KEY_THREE)) {
-        currentDifficulty = HARD;
-        ResetGame(currentDifficulty); // Reset game with new difficulty
-    }
-    else if (IsKeyPressed(KEY_FOUR)) {
-        currentState = MENU; // Go back to menu
-    }
-}
+    while (!WindowShouldClose()) { // Main menu loop runs until the window is closed
+        // Navigate the menu
+        if (IsKeyPressed(KEY_UP)) menuOption = (menuOption > 0) ? menuOption - 1 : 3; // Move up, wrap to last option
+        if (IsKeyPressed(KEY_DOWN)) menuOption = (menuOption < 3) ? menuOption + 1 : 0; // Move down, wrap to first option
+        if (IsKeyPressed(KEY_ENTER)) { // Handle menu selection
+            if (menuOption == 0) { // PLAY
+                RunGame(); // Start the game loop
+            }
+            else if (menuOption == 1) { // HOW TO PLAY
+                while (!WindowShouldClose()) {
+                    if (IsKeyPressed(KEY_ESCAPE)) break; // Exit "How to Play" screen to return to the menu
+                    BeginDrawing();
+                    DisplayHowToPlay(); // Render the "How to Play" screen
+                    EndDrawing();
+                }
+            }
+            else if (menuOption == 2) { // ABOUT US
+                while (!WindowShouldClose()) {
+                    if (IsKeyPressed(KEY_ESCAPE)) break; // Exit "About Us" screen to return to the menu
+                    BeginDrawing();
+                    DisplayAboutUs(); // Render the "About Us" screen
+                    EndDrawing();
+                }
+            }
+            else if (menuOption == 3) { // EXIT
+                CloseWindow(); // Close the application window
+                return 0; // Exit the program
+            }
+        }
 
-// Function to draw the instructions screen
-void DrawInstructions() {
-    const char* instructionsText = "Instructions: Guess the word by entering letters.";
-    DrawText(instructionsText, screenWidth / 2 - MeasureText(instructionsText, 30) / 2, 100, 20, TextColor);
-    DrawText("Press letters A-Z to guess.", screenWidth / 2 - MeasureText("Press letters A-Z to guess.", 20) / 2, 150, 20, TextColor);
-    DrawText("You can guess up to 6 wrong letters before losing.", screenWidth / 2 - MeasureText("You can guess up to 6 wrong letters before losing.", 20) / 2, 200, 20, TextColor);
-    DrawText("Press 'Back' to return.", screenWidth / 2 - MeasureText("Press 'Back' to return.", 20) / 2, 250, 20, TextColor);
-
-    // Allow user to go back to menu
-    if (IsKeyPressed(KEY_BACKSPACE)) {
-        currentState = MENU;
-    }
-}
-
-// Function to draw the credits screen
-void DrawCredits() {
-    const char* creditsText = "Credits: Hangman Game by YourName.";
-    DrawText(creditsText, screenWidth / 2 - MeasureText(creditsText, 30) / 2, 100, 30, TextColor);
-    DrawText("Press 'Back' to return.", screenWidth / 2 - MeasureText("Press 'Back' to return.", 20) / 2, 150, 20, TextColor);
-
-    // Allow user to go back to menu
-    if (IsKeyPressed(KEY_BACKSPACE)) {
-        currentState = MENU;
-    }
-}
-
-// Function to handle the win condition
-void HandleWinCondition() {
-    if (gameWon) {
-        DrawText("You Win!", screenWidth / 2 - MeasureText("You Win!", 40) / 2, 350, 40, Highlight);
-    }
-}
-
-// Function to handle the loss condition
-void HandleLossCondition() {
-    if (gameLost) {
-        DrawText("You Lose!", screenWidth / 2 - MeasureText("You Lose!", 40) / 2, 350, 40, Highlight);
-        DrawText(("The word was: " + secretWord).c_str(), screenWidth / 2 - MeasureText("The word was: ", 20) / 2, 400, 20, TextColor);
-    }
-}
-// Function to reset the game (called when starting a new game or changing difficulty)
-void MainResetGame(Difficulty newDifficulty) {
-    gameWon = false; // Reset win condition
-    gameLost = false; // Reset loss condition
-    wrongGuesses.clear(); // Clear the list of wrong guesses
-    guessedWord.clear(); // Clear the guessed word
-
-    // Select a new word based on the chosen difficulty
-    guessedWord = std::string(secretWord.size(), '_'); // Initialize guessedWord with underscores
-
-    // Set maximum attempts based on the selected difficulty
-    switch (newDifficulty) {
-    case EASY:
-        maxAttempts = 8; // Easier difficulty has more chances
-        break;
-    case MEDIUM:
-        maxAttempts = 6; // Medium difficulty has a balanced number of attempts
-        break;
-    case HARD:
-        maxAttempts = 4; // Hard difficulty has fewer chances
-        break;
-    }
-}
-
-// Function to select a random word from a predefined list based on difficulty
-std::string GetRandomWord(Difficulty difficulty) {
-    std::vector<std::string> easyWords = { "apple", "banana", "grape" };
-    std::vector<std::string> mediumWords = { "elephant", "guitar", "computer" };
-    std::vector<std::string> hardWords = { "astronaut", "inconceivable", "quizzaciously" };
-
-    // Randomly choose a word based on the difficulty
-    std::vector<std::string> wordList;
-    switch (difficulty) {
-    case EASY:
-        wordList = easyWords;
-        break;
-    case MEDIUM:
-        wordList = mediumWords;
-        break;
-    case HARD:
-        wordList = hardWords;
-        break;
-    }
-
-    // Return a random word from the selected list
-    int randomIndex = GetRandomValue(0, wordList.size() - 1);
-    return wordList[randomIndex];
-}
-
-// Main game loop function
-void GameLoop() {
-    // Initialize Raylib
-    InitWindow(screenWidth, screenHeight, "Hangman Game");
-    SetTargetFPS(60); // Set frames per second for smoother gameplay
-
-    while (!WindowShouldClose()) {
-        // Begin drawing
+        // Drawing the main menu
         BeginDrawing();
-        ClearBackground(BLACK);
-
-        // Handle the game states (menu, gameplay, options, etc.)
-        switch (currentState) {
-        case MENU:
-            DrawMenu();
-            break;
-        case PLAY:
-            UpdateGameplay();
-            DrawGameplay();
-            break;
-        case OPTIONS:
-            DrawOptions();
-            break;
-        case INSTRUCTIONS:
-            DrawInstructions();
-            break;
-        case CREDITS:
-            DrawCredits();
-            break;
-        }
-
-        // End drawing
+        DisplayMainMenu(menuOption); // Display the menu with the currently selected option highlighted
         EndDrawing();
     }
 
-    // Close Raylib window after the game loop ends
+    // Cleanup: Close the window before exiting
     CloseWindow();
-}
-
-// Function to draw the main menu (title and options)
-void MainDrawMenu() {
-    const char* menuTitle = "Hangman Game";
-    DrawText(menuTitle, screenWidth / 2 - MeasureText(menuTitle, 30) / 2, 100, 30, TextColor);
-
-    DrawText("1. Start Game", screenWidth / 2 - MeasureText("1. Start Game", 20) / 2, 200, 20, TextColor);
-    DrawText("2. Options", screenWidth / 2 - MeasureText("2. Options", 20) / 2, 250, 20, TextColor);
-    DrawText("3. Instructions", screenWidth / 2 - MeasureText("3. Instructions", 20) / 2, 300, 20, TextColor);
-    DrawText("4. Credits", screenWidth / 2 - MeasureText("4. Credits", 20) / 2, 350, 20, TextColor);
-
-    DrawText("Press 'Esc' to quit", screenWidth / 2 - MeasureText("Press 'Esc' to quit", 20) / 2, 400, 20, TextColor);
-
-    // Menu selection handling
-    if (IsKeyPressed(KEY_ONE)) {
-        currentState = PLAY; // Start the game
-        MainResetGame(currentDifficulty); // Reset the game when starting
-    }
-    else if (IsKeyPressed(KEY_TWO)) {
-        currentState = OPTIONS; // Go to options menu
-    }
-    else if (IsKeyPressed(KEY_THREE)) {
-        currentState = INSTRUCTIONS; // Show instructions
-    }
-    else if (IsKeyPressed(KEY_FOUR)) {
-        currentState = CREDITS; // Show credits
-    }
-    else if (IsKeyPressed(KEY_ESCAPE)) {
-        CloseWindow(); // Quit the game
-    }
-}
-
-// Function to display the main game logic (setups and transitions)
-void DisplayGame() {
-    if (currentState == PLAY) {
-        UpdateGameplay();
-        DrawGameplay();
-    }
-    else {
-        MainDrawMenu();
-    }
-}
-
-int main() {
-    // Initialize game
-    GameLoop(); // Start the main game loop
-    return 0; // End the game
+    return 0; // Exit the program
 }
 
