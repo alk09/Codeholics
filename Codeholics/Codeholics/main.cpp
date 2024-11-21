@@ -65,3 +65,52 @@ std::vector<int> CheckGuess(const std::string& guess, const std::string& word) {
     return result; // Return feedback array
 }
 
+// Entry Point: main function
+int main() {
+    // Initialize the Raylib window
+    InitWindow(screenWidth, screenHeight, "Wordle with Menu and Scoring");
+    SetTargetFPS(60); // Set the frame rate to 60 frames per second
+
+    int menuOption = 0; // Tracks the currently selected menu option
+
+    while (!WindowShouldClose()) { // Main menu loop runs until the window is closed
+        // Navigate the menu
+        if (IsKeyPressed(KEY_UP)) menuOption = (menuOption > 0) ? menuOption - 1 : 3; // Move up, wrap to last option
+        if (IsKeyPressed(KEY_DOWN)) menuOption = (menuOption < 3) ? menuOption + 1 : 0; // Move down, wrap to first option
+        if (IsKeyPressed(KEY_ENTER)) { // Handle menu selection
+            if (menuOption == 0) { // PLAY
+                RunGame(); // Start the game loop
+            }
+            else if (menuOption == 1) { // HOW TO PLAY
+                while (!WindowShouldClose()) {
+                    if (IsKeyPressed(KEY_ESCAPE)) break; // Exit "How to Play" screen to return to the menu
+                    BeginDrawing();
+                    DisplayHowToPlay(); // Render the "How to Play" screen
+                    EndDrawing();
+                }
+            }
+            else if (menuOption == 2) { // ABOUT US
+                while (!WindowShouldClose()) {
+                    if (IsKeyPressed(KEY_ESCAPE)) break; // Exit "About Us" screen to return to the menu
+                    BeginDrawing();
+                    DisplayAboutUs(); // Render the "About Us" screen
+                    EndDrawing();
+                }
+            }
+            else if (menuOption == 3) { // EXIT
+                CloseWindow(); // Close the application window
+                return 0; // Exit the program
+            }
+        }
+
+        // Drawing the main menu
+        BeginDrawing();
+        DisplayMainMenu(menuOption); // Display the menu with the currently selected option highlighted
+        EndDrawing();
+    }
+
+    // Cleanup: Close the window before exiting
+    CloseWindow();
+    return 0; // Exit the program
+}
+
