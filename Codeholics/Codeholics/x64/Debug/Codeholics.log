@@ -1,4 +1,3 @@
 ﻿  main.cpp
-C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\Codeholics\main.cpp(30,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
-C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\x64\Debug\Codeholics.exe : fatal error LNK1120: 1 unresolved externals
+C:\Users\AVGeo\Documents\GitHub\Codeholics\Codeholics\Codeholics\main.cpp(30,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\AVGeo\Documents\GitHub\Codeholics\Codeholics\Codeholics\main.cpp(120,17): error C3861: 'RunGame': identifier not found

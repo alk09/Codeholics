@@ -65,6 +65,44 @@ std::vector<int> CheckGuess(const std::string& guess, const std::string& word) {
     return result; // Return feedback array
 }
 
+// Function to display the main menu
+void DisplayMainMenu(int selectedOption) {
+    const char* menuOptions[] = { "PLAY", "HOW TO PLAY", "ABOUT US", "EXIT" }; // Menu options
+    int totalOptions = 4; // Total number of menu items
+
+    ClearBackground(RAYWHITE); // Set the background color to white
+    DrawText("WORDLE GAME MENU", screenWidth / 2 - MeasureText("WORDLE GAME MENU", 30) / 2, 50, 30, BLACK); // Title
+
+    // Loop to draw each menu option
+    for (int i = 0; i < totalOptions; i++) {
+        Color textColor = (i == selectedOption) ? GREEN : DARKGRAY; // Highlight the selected option
+        DrawText(menuOptions[i], screenWidth / 2 - MeasureText(menuOptions[i], 20) / 2, 150 + i * 50, 20, textColor); // Draw option
+    }
+}
+
+// Function to display "How to Play"
+void DisplayHowToPlay() {
+    ClearBackground(RAYWHITE); // Set the background color to white
+    DrawText("HOW TO PLAY", screenWidth / 2 - MeasureText("HOW TO PLAY", 30) / 2, 50, 30, BLACK); // Title
+    // Instructions
+    DrawText("1. Guess the secret 5-letter word in 6 attempts.", 50, 150, 20, DARKGRAY);
+    DrawText("2. Each guess must be a valid word.", 50, 180, 20, DARKGRAY);
+    DrawText("3. Feedback will indicate correct, misplaced, or absent letters.", 50, 210, 20, DARKGRAY);
+    DrawText("Press ESC to return to the menu.", 50, 270, 20, DARKGRAY); // Back navigation hint
+}
+
+// Function to display "About Us"
+void DisplayAboutUs() {
+    ClearBackground(RAYWHITE); // Set the background color to white
+    DrawText("ABOUT US", screenWidth / 2 - MeasureText("ABOUT US", 30) / 2, 50, 30, BLACK); // Title
+    // Description
+    DrawText("This Wordle-like game was created using raylib.", 50, 150, 20, DARKGRAY);
+    DrawText("Author: Your Name", 50, 180, 20, DARKGRAY);
+    DrawText("Year: 2024", 50, 210, 20, DARKGRAY);
+    DrawText("Press ESC to return to the menu.", 50, 270, 20, DARKGRAY); // Back navigation hint
+}
+
+
 // Entry Point: main function
 int main() {
     // Initialize the Raylib window
