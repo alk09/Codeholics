@@ -1,6 +1,5 @@
-# Codeholics
-<p align="center">
-
+<h1 align="center"> Codeholics
+<p align="center"> <img src="assets/logo-codeholics.png"/>
 
 
 ## 🏢 Our team
@@ -37,6 +36,13 @@
  </p>
 </p>
 
+## 📃 Documentation <a name="docs"></a>
 
+###  Documentation
 
-## 📃 Documentation
+[Codeholics Documentation](https://github.com/alk09/Codeholics/blob/main/docs/Codeholics-documentation.docx)
+
+### Presentation
+
+[Codeholics Presentation](https://github.com/alk09/Codeholics/blob/main/docs/CODEHOLICS-presentation.pptx)
+
