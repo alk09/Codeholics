@@ -102,6 +102,101 @@ void DisplayAboutUs() {
     DrawText("Press ESC to return to the menu.", 50, 270, 20, DARKGRAY); // Back navigation hint
 }
 
+// Function to run the game loop
+void RunGame() {
+    std::string answer = GetRandomWord();         // Secret word chosen randomly
+    std::vector<std::string> guesses;           // List of guesses entered by the player
+    std::vector<std::vector<int>> feedbacks;    // Feedback for each guess
+    std::string currentGuess = "";              // Current guess being typed by the player
+    int score = 0;                              // Player's score
+    bool gameOver = false;                      // Flag indicating if the game is over
+    bool gameWon = false;                       // Flag indicating if the player has won
+
+    while (!WindowShouldClose()) { // Game loop runs until the window is closed
+        if (IsKeyPressed(KEY_ESCAPE)) break; // Exit the game to the menu if ESC is pressed
+
+        if (!gameOver) {
+            // Input handling
+            if (IsKeyPressed(KEY_BACKSPACE) && !currentGuess.empty()) {
+                currentGuess.pop_back(); // Remove the last character from the guess
+            }
+            else if (IsKeyPressed(KEY_ENTER) && currentGuess.length() == wordLength) {
+                // Submit the guess
+                std::vector<int> feedback = CheckGuess(currentGuess, answer); // Get feedback
+                feedbacks.push_back(feedback); // Store feedback
+                guesses.push_back(currentGuess); // Store the guess
+
+                if (currentGuess == answer) {
+                    gameOver = true; // Set game over flag
+                    gameWon = true; // Set game won flag
+                    score += 100;   // Add points for winning
+                }
+                else if (guesses.size() >= maxGuesses) {
+                    gameOver = true; // End game if maximum guesses are reached
+                }
+                currentGuess = ""; // Reset current guess
+            }
+            else {
+                // Add letters to the current guess
+                for (int key = KEY_A; key <= KEY_Z; key++) {
+                    if (IsKeyPressed(key) && currentGuess.length() < wordLength) {
+                        currentGuess += ToUpper((char)(key - KEY_A + 'A')); // Convert and add the letter
+                    }
+                }
+            }
+        }
+        else {
+            // Restart the game if game is over
+            if (IsKeyPressed(KEY_R)) {
+                answer = GetRandomWord(); // Select a new word
+                guesses.clear();          // Clear guesses
+                feedbacks.clear();        // Clear feedbacks
+                currentGuess = "";        // Reset current guess
+                gameOver = false;         // Reset game over flag
+                gameWon = false;          // Reset game won flag
+            }
+        }
+
+        // Drawing
+        BeginDrawing(); // Begin the rendering process
+        ClearBackground(RAYWHITE); // Set background color
+
+        // Title
+        DrawText("WORDLE", screenWidth / 2 - MeasureText("WORDLE", 40) / 2, 20, 40, BLACK);
+
+        // Instructions or game over message
+        if (!gameOver) {
+            DrawText("Type a 5-letter word and press ENTER to guess.", 20, 80, 20, DARKGRAY);
+        }
+        else {
+            DrawText(gameWon ? "YOU WIN! Press R to restart." : "GAME OVER! Press R to restart.", 20, 80, 20, gameWon ? GREEN : RED);
+            DrawText(TextFormat("The word was: %s", answer.c_str()), 20, 110, 20, DARKGRAY); // Display the correct word after the game ends
+            DrawText(TextFormat("Score: %d", score), screenWidth - MeasureText(TextFormat("Score: %d", score), 20) - 10, 10, 20, BLUE); //draw player's score
+        }
+
+        // Draw guesses and feedback
+        for (int i = 0; i < guesses.size(); i++) {
+            for (int j = 0; j < wordLength; j++) {
+                int feedback = feedbacks[i][j]; // Feedback for the current letter
+                Color cellColor = (feedback == 2) ? correctColor : (feedback == 1) ? presentColor : absentColor; // Determine color
+
+                // Draw a rectangle for each letter, colored based on feedback
+                DrawRectangle(50 + j * 60, 150 + i * 60, 50, 50, cellColor);
+                // Draw the letter inside the rectangle
+                DrawText(std::string(1, guesses[i][j]).c_str(), 65 + j * 60, 165 + i * 60, 20, WHITE);
+            }
+        }
+
+        // Draw the current guess being typed
+        for (int j = 0; j < currentGuess.size(); j++) {
+            DrawRectangle(50 + j * 60, 150 + guesses.size() * 60, 50, 50, LIGHTGRAY); // Draw light gray box
+            DrawText(std::string(1, currentGuess[j]).c_str(), 65 + j * 60, 165 + guesses.size() * 60, 20, BLACK); // Draw the letter
+        }
+
+        EndDrawing(); // End the rendering process
+    }
+}
+
 
 // Entry Point: main function
 int main() {
