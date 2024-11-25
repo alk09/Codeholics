@@ -1,5 +1,4 @@
 ﻿  main.cpp
-C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\Codeholics\main.cpp(30,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\Codeholics\main.cpp(192,44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\Codeholics\main.cpp(193,80): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Codeholics.vcxproj -> C:\Users\AVGeo\Desktop\Project\Codeholics\Codeholics\x64\Debug\Codeholics.exe
