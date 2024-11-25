@@ -230,7 +230,6 @@ int main() {
                 }
             }
             else if (menuOption == 3) {  // EXIT option
-                CloseWindow();  // Close the window and exit the game
                 return 0;  // Exit the program
             }
         }
@@ -242,7 +241,6 @@ int main() {
     }
 
     // Cleanup: Close the Raylib window
-    CloseWindow();
     return 0;  // Exit the program
 }
 

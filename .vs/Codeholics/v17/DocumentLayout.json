@@ -1,10 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\flieu\\Desktop\\Viktor\\Codeholics\\",
+  "WorkspaceRootPath": "C:\\Users\\AVGeo\\Desktop\\Project\\Codeholics\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3AF53044-955B-4D5F-8DF9-45223F087D04}|Codeholics\\Codeholics.vcxproj|C:\\Users\\flieu\\Desktop\\Viktor\\Codeholics\\Codeholics\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{3AF53044-955B-4D5F-8DF9-45223F087D04}|Codeholics\\Codeholics.vcxproj|C:\\Users\\AVGeo\\Desktop\\Project\\Codeholics\\Codeholics\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{3AF53044-955B-4D5F-8DF9-45223F087D04}|Codeholics\\Codeholics.vcxproj|solutionrelative:Codeholics\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3AF53044-955B-4D5F-8DF9-45223F087D04}|Codeholics\\Codeholics.vcxproj|C:\\USERS\\AVGEO\\DESKTOP\\PROJECT\\CODEHOLICS\\VENDOR\\RAYLIB\\INCLUDE\\RAYLIB.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{3AF53044-955B-4D5F-8DF9-45223F087D04}|Codeholics\\Codeholics.vcxproj|solutionrelative:VENDOR\\RAYLIB\\INCLUDE\\RAYLIB.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,17 +18,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "raylib.h",
+              "DocumentMoniker": "C:\\Users\\AVGeo\\Desktop\\Project\\Codeholics\\vendor\\raylib\\include\\raylib.h",
+              "RelativeDocumentMoniker": "vendor\\raylib\\include\\raylib.h",
+              "ToolTip": "C:\\Users\\AVGeo\\Desktop\\Project\\Codeholics\\vendor\\raylib\\include\\raylib.h",
+              "RelativeToolTip": "vendor\\raylib\\include\\raylib.h",
+              "ViewState": "AgIAAKIEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-25T22:19:14.293Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "main.cpp",
-              "DocumentMoniker": "C:\\Users\\flieu\\Desktop\\Viktor\\Codeholics\\Codeholics\\main.cpp",
+              "DocumentMoniker": "C:\\Users\\AVGeo\\Desktop\\Project\\Codeholics\\Codeholics\\main.cpp",
               "RelativeDocumentMoniker": "Codeholics\\main.cpp",
-              "ToolTip": "C:\\Users\\flieu\\Desktop\\Viktor\\Codeholics\\Codeholics\\main.cpp",
+              "ToolTip": "C:\\Users\\AVGeo\\Desktop\\Project\\Codeholics\\Codeholics\\main.cpp",
               "RelativeToolTip": "Codeholics\\main.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAWAAAA",
+              "ViewState": "AgIAAN8AAAAAAAAAAAAAAOcAAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-11-25T20:39:09.228Z",
               "EditorCaption": ""
