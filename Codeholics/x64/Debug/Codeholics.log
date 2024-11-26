@@ -1,5 +1,4 @@
 ﻿  main.cpp
-C:\Users\Dimitar\OneDrive - Министерство на образованието и науката\Desktop\project\Codeholics\Codeholics\main.cpp(192,44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dimitar\OneDrive - Министерство на образованието и науката\Desktop\project\Codeholics\Codeholics\main.cpp(193,80): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+C:\Users\Dimitar\OneDrive - Министерство на образованието и науката\Desktop\project\Codeholics\Codeholics\main.cpp(193,44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Dimitar\OneDrive - Министерство на образованието и науката\Desktop\project\Codeholics\Codeholics\main.cpp(194,80): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Codeholics.vcxproj -> C:\Users\Dimitar\OneDrive - Министерство на образованието и науката\Desktop\project\Codeholics\x64\Debug\Codeholics.exe

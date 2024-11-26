@@ -94,9 +94,9 @@ void DisplayAboutUs() {
     DrawText("This Wordle-like game was created using raylib.", 50, 150, 20, DARKGRAY);
     DrawText("We are still beginners, but we hope you like our mini game ", 50, 180, 20, DARKGRAY);
     DrawText("Creators of the game: ", 50, 210, 20, DARKGRAY);
-    DrawText("1. Aleksandar Georgiev (Scrum Trainer)", 50, 240, 20, DARKGRAY);
+    DrawText("1. Borimir Kirov (Scrum Trainer)", 50, 240, 20, DARKGRAY);
     DrawText("2. Mila Lazarova (Designer)", 50, 270, 20, DARKGRAY);
-    DrawText("3. Borimir Kirov (Back-End Developer)", 50, 300, 20, DARKGRAY);
+    DrawText("3. Aleksandar Georgiev (Back-End Developer)", 50, 300, 20, DARKGRAY);
     DrawText("4. Dimitar Dimitrov (Back-End Developer)", 50, 330, 20, DARKGRAY);
     DrawText("Press ESC to return to the menu.", 50, 360, 20, DARKGRAY);
 }
@@ -116,6 +116,7 @@ void RunGame() {
 
         if (!gameOver) {
             // Handle user input
+                
             if (IsKeyPressed(KEY_BACKSPACE) && !currentGuess.empty()) {
                 currentGuess.pop_back();  // Remove the last character if BACKSPACE is pressed
             }
