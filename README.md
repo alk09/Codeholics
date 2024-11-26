@@ -3,9 +3,9 @@
 
 
 ## 🏢 Our team
+<p><a href="https://github.com/BDKirov23">Borimir Kirov</a> - Scrum Trainer</p>
 <p><a href="https://github.com/MKLazarova23">Mila Lazarova</a> - Designer</p>
-<p><a href="https://github.com/alk09">Aleksandur Georgiev</a> - Scrum Trainer</p>
-<p><a href="https://github.com/BDKirov23">Borimir Kirov</a> - Back-end Developer</p>
+<p><a href="https://github.com/alk09">Aleksandur Georgiev</a> - Back-end Developer</p>
 <p><a href="https://github.com/DSDimitrov23">Dimitur Dimitrov</a> - Back-end Developer</p>
 
 ## 📋 Description of the game
