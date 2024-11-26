@@ -33,13 +33,13 @@ char ToUpper(char c) {
 // Function to compare a guess with the answer and return feedback
 std::vector<int> CheckGuess(const std::string& guess, const std::string& word) {
     std::vector<int> result(WORD_LENGTH, 0);  // Initialize the result vector with zeros (0 = absent, 1 = present, 2 = correct)
-    std::string tempWord = word;  // Make a copy of the word to mark used letters
+    std::string UsedWord = word;  // Make a copy of the word to mark used letters
 
     // First pass: Check for correct letters in the correct positions
     for (int i = 0; i < WORD_LENGTH; i++) {
-        if (guess[i] == tempWord[i]) {
+        if (guess[i] == UsedWord[i]) {
             result[i] = 2;         // Mark as correct
-            tempWord[i] = '*';     // Mark the letter as used in the word
+            UsedWord[i] = '*';     // Mark the letter as used in the word
         }
     }
 
@@ -47,9 +47,9 @@ std::vector<int> CheckGuess(const std::string& guess, const std::string& word) {
     for (int i = 0; i < WORD_LENGTH; i++) {
         if (result[i] != 2) {  // Skip already matched letters
             for (int j = 0; j < WORD_LENGTH; j++) {
-                if (guess[i] == tempWord[j]) {
+                if (guess[i] == UsedWord[j]) {
                     result[i] = 1;  // Mark as present but misplaced
-                    tempWord[j] = '*';  // Mark this letter as used
+                    UsedWord[j] = '*';  // Mark this letter as used
                     break;
                 }
             }
