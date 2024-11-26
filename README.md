@@ -40,7 +40,7 @@
 
 ###  Documentation
 
-[Codeholics Documentation](https://github.com/alk09/Codeholics/blob/main/docs/Codeholics-documentation0.docx)
+[Codeholics Documentation](https://github.com/alk09/Codeholics/blob/main/docs/Codeholics-documentation.docx)
 
 ### Presentation
 
