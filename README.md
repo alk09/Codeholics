@@ -33,8 +33,14 @@
 <p align="left">
 <p>
     <img src="https://cdn.worldvectorlogo.com/logos/microsoft-teams-1.svg" alt="Microsoft Teams logo" width=48px>
-   <img src="https://banner2.cleanpng.com/20180421/die/kisspng-github-computer-icons-node-js-circle-pack-5adb933cc5ffc2.914040391524339516811.jpg" width=60px>
  </p>
+</p>
+
+- We used this app to upload and save our porject's files
+
+  <p align="left">
+<p><img src="https://banner2.cleanpng.com/20180421/die/kisspng-github-computer-icons-node-js-circle-pack-5adb933cc5ffc2.914040391524339516811.jpg" width=60px>
+</p>
 </p>
 
 ## 📃 Documentation <a name="docs"></a>
