@@ -16,7 +16,7 @@ Color PRESENT_COLOR = YELLOW;  // Color for correct letters in wrong positions
 Color ABSENT_COLOR = GRAY;     // Color for absent letters
 
 // List of potential words for the secret word
-std::vector<std::string> wordList = { "CRANE", "PLANE", "BRAVE", "GRAPE", "SHINE", "BLEND", "DRIVE", "CHIME" };
+std::vector<std::string> wordList = { "CRANE", "PLANE", "BRAVE", "GRAPE", "SHINE", "BLEND", "DRIVE", "CHIME", "PANTS", "STONE", "STOVE", "PLAIN", "STAIN", "PHOTO", "PHONE", "MOUSE" };
 
 // Function to pick a random word from the list
 std::string GetRandomWord() {
@@ -64,7 +64,7 @@ void DisplayMainMenu(int selectedOption) {
     const char* menuOptions[] = { "PLAY", "HOW TO PLAY", "ABOUT US", "EXIT" };  // Menu options
     int totalOptions = 4;  // Total number of menu options
 
-    ClearBackground(RAYWHITE);  // Clear screen and set background to white
+    ClearBackground(LIGHTGRAY);  // Clear screen and set background to white9
     DrawText("WORDLE GAME MENU", SCREEN_WIDTH / 2 - MeasureText("WORDLE GAME MENU", 30) / 2, 50, 30, BLACK);  // Draw title
 
     // Draw each menu option with highlighting for the selected one
