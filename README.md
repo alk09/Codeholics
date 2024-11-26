@@ -9,7 +9,7 @@
 <p><a href="https://github.com/DSDimitrov23">Dimitur Dimitrov</a> - Back-end Developer</p>
 
 ## 📋 Description of the game
-### Our app aims to entertain and engage users with a puzzle game.
+### Our app is designed to entertain and grab our user's attention with a fun and entertaining word game.
 
 ## 💻 Used technologies
 - We used these apps for documentation:
